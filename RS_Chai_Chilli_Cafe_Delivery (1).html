@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RS Chai & Chilli Cafe - Home Delivery</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7f4ef;color:#222}
+header{background:#3b160d;color:#fff;padding:20px;text-align:center}
+header h1{margin:0;font-size:28px}header p{margin:6px 0 0;color:#ffd9a8}
+.wrap{max-width:700px;margin:auto;padding:15px}.notice{background:#fff3cd;padding:12px;border-radius:10px;margin-bottom:15px}
+h2{font-size:20px}.item{background:#fff;border-radius:12px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px #00000010}
+.item small{display:block;color:#777;margin-top:4px}.controls button{border:0;border-radius:8px;padding:7px 11px;background:#3b160d;color:#fff}.qty{margin:0 8px;font-weight:bold}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:6px 0 12px;font-size:15px}
+button.order{width:100%;padding:14px;background:#16833b;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:bold}
+.total{background:#fff;padding:15px;border-radius:10px;margin:15px 0;font-size:18px}
+footer{text-align:center;color:#777;padding:20px}
+</style>
+</head>
+<body>
+<header>
+<h1>RS Chai & Chilli Cafe</h1>
+<p>☕ Chai • 🍔 Burger • 🌯 Roll • 🥪 Sandwich • 🥤 Cold Drink</p>
+</header>
+<div class="wrap">
+<div class="notice">🛵 <b>Home Delivery:</b> Cafe se 5 km ke andar delivery available.</div>
+
+<h2>🍽️ Menu</h2>
+<div id="menu"></div>
+
+<div class="total">
+<b>Order Total: ₹<span id="total">0</span></b>
+</div>
+
+<h2>📍 Delivery Details</h2>
+<input id="name" placeholder="Aapka naam">
+<input id="phone" placeholder="Mobile number">
+<textarea id="address" rows="3" placeholder="Delivery address"></textarea>
+<input id="distance" type="number" min="0" step="0.1" placeholder="Cafe se distance (km)">
+<select id="payment">
+<option value="Cash on Delivery">Cash on Delivery</option>
+<option value="UPI">UPI</option>
+</select>
+
+<button class="order" onclick="sendOrder()">📲 WhatsApp par Order Karein</button>
+</div>
+<footer>RS Chai & Chilli Cafe • 5 KM Home Delivery</footer>
+
+<script>
+const products=[
+["Sandwich",60],["Burger",70],["Roll",80],["Chai",15],
+["Sting",50],["Coca-Cola",40],["Campa Energy",30],["Sprite",40]
+];
+const cart=Array(products.length).fill(0);
+
+function render(){
+ const m=document.getElementById("menu");m.innerHTML="";
+ products.forEach((p,i)=>{
+  m.innerHTML+=`<div class="item"><div><b>${p[0]}</b><small>₹${p[1]}</small></div>
+  <div class="controls"><button onclick="change(${i},-1)">−</button><span class="qty">${cart[i]}</span><button onclick="change(${i},1)">+</button></div></div>`;
+ });
+ let t=products.reduce((s,p,i)=>s+p[1]*cart[i],0);
+ document.getElementById("total").textContent=t;
+}
+function change(i,n){cart[i]=Math.max(0,cart[i]+n);render()}
+function sendOrder(){
+ const name=document.getElementById("name").value.trim(),phone=document.getElementById("phone").value.trim();
+ const address=document.getElementById("address").value.trim(),distance=Number(document.getElementById("distance").value);
+ const payment=document.getElementById("payment").value;
+ if(!name||!phone||!address||!distance){alert("Naam, mobile, address aur distance bhariye.");return}
+ if(distance>5){alert("Sorry, delivery sirf 5 km ke andar available hai.");return}
+ const lines=products.map((p,i)=>cart[i]?`${p[0]} x ${cart[i]} = ₹${p[1]*cart[i]}`:"").filter(Boolean);
+ if(!lines.length){alert("Pehle koi item select kijiye.");return}
+ const subtotal=products.reduce((s,p,i)=>s+p[1]*cart[i],0);
+ const delivery=distance<=2?10:20;
+ const total=subtotal+delivery;
+ const msg=`RS Chai & Chilli Cafe - New Order%0A%0A${lines.join("%0A")}%0A%0ASubtotal: ₹${subtotal}%0ADelivery: ₹${delivery}%0ATotal: ₹${total}%0A%0AName: ${encodeURIComponent(name)}%0AMobile: ${encodeURIComponent(phone)}%0AAddress: ${encodeURIComponent(address)}%0ADistance: ${distance} km%0APayment: ${encodeURIComponent(payment)}`;
+ const cafeWhatsApp="919999999999"; // Yahan cafe ka WhatsApp number dalna hai
+ window.open(`https://wa.me/${cafeWhatsApp}?text=${msg}`,"_blank");
+}
+render();
+</script>
+</body>
+</html>
