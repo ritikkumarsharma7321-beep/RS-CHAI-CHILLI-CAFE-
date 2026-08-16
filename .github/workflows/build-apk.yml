@@ -1,0 +1,27 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: |
+          unzip -q "RS-Chai-Chilli-Cafe-Android (1).zip"
+          cd "RS-Chai-Chilli-Cafe-Android"
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RS-Chai-Chilli-Cafe-debug
+          path: RS-Chai-Chilli-Cafe-Android/app/build/outputs/apk/debug/app-debug.apk
