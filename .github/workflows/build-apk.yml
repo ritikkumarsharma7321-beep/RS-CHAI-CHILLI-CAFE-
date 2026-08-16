@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -16,9 +16,21 @@ jobs:
       - name: Extract Android project
         run: |
           mkdir -p android-build
-          unzip -q -o "RS-Chai-Chilli-Cafe-Android (1).zip" -d android-build
+          unzip -q "RS-Chai-Chilli-Cafe-Android (1).zip" -d android-build
 
-          PROJECT_DIR=$(dirname "$(find android-build -name gradlew -type f | head -n 1)")
+          echo "=== Extracted files ==="
+          find android-build -maxdepth 4 -type f | head -100
+
+          echo "=== Searching gradlew ==="
+          GRADLEW=$(find android-build -type f -name gradlew | head -1)
+
+          if [ -z "$GRADLEW" ]; then
+            echo "ERROR: gradlew file nahi mila!"
+            echo "ZIP ke andar Android Gradle project/wrapper missing hai."
+            exit 1
+          fi
+
+          PROJECT_DIR=$(dirname "$GRADLEW")
           echo "Project found at: $PROJECT_DIR"
 
           cd "$PROJECT_DIR"
