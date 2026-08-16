@@ -15,9 +15,13 @@ jobs:
 
       - name: Extract Android project
         run: |
-          mkdir android-build
-          unzip -q "RS-Chai-Chilli-Cafe-Android (1).zip" -d android-build
-          cd android-build/RS-Chai-Chilli-Cafe-Android
+          mkdir -p android-build
+          unzip -q -o "RS-Chai-Chilli-Cafe-Android (1).zip" -d android-build
+
+          PROJECT_DIR=$(dirname "$(find android-build -name gradlew -type f | head -n 1)")
+          echo "Project found at: $PROJECT_DIR"
+
+          cd "$PROJECT_DIR"
           chmod +x gradlew
           ./gradlew assembleDebug
 
@@ -25,4 +29,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: RS-Chai-Chilli-Cafe-debug
-          path: android-build/RS-Chai-Chilli-Cafe-Android/app/build/outputs/apk/debug/app-debug.apk
+          path: android-build/**/app/build/outputs/apk/debug/app-debug.apk
