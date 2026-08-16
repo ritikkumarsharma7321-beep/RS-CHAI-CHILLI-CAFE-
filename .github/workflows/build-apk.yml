@@ -15,7 +15,7 @@ jobs:
 
       - name: Extract Android project
         run: |
-          unzip -q "RS-Chai-Chilli-Cafe-Android (1).zip"
+          unzip -q -o "RS-Chai-Chilli-Cafe-Android (1).zip"
           cd "RS-Chai-Chilli-Cafe-Android"
           chmod +x gradlew
           ./gradlew assembleDebug
