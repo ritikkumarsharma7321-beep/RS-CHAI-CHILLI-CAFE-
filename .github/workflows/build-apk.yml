@@ -25,9 +25,6 @@ jobs:
           mkdir -p android-build
           unzip -q "RS-Chai-Chilli-Cafe-Android (1).zip" -d android-build
 
-          echo "=== Project files ==="
-          find android-build -maxdepth 3 -type f | sort
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
@@ -36,7 +33,7 @@ jobs:
       - name: Build APK
         working-directory: android-build
         run: |
-          gradle assembleDebug --stacktrace
+          gradle assembleDebug --stacktrace -Pkotlin.jvm.target.validation.mode=warning
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
